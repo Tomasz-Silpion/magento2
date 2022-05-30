@@ -275,11 +275,13 @@ class CustomerRepository implements CustomerRepositoryInterface
             }
             $savedAddressIds = [];
             foreach ($customer->getAddresses() as $address) {
-                $address->setCustomerId($customerId)
-                    ->setRegion($address->getRegion());
-                $this->addressRepository->save($address);
-                if ($address->getId()) {
-                    $savedAddressIds[] = $address->getId();
+                if (!$address->getId()) {
+                    $address->setCustomerId($customerId)
+                        ->setRegion($address->getRegion());
+                    $this->addressRepository->save($address);
+                    if ($address->getId()) {
+                        $savedAddressIds[] = $address->getId();
+                    }
                 }
             }
             $this->deleteAddressesByIds(array_diff($existingAddressIds, $savedAddressIds));
